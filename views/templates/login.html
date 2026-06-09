@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Login - Hospital Management System{% endblock %}
+{% block content %}
+<div class="row justify-content-center align-items-center min-vh-80">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-hospital" style="font-size: 3rem; color: #8B1A2B;"></i>
+                    <h3 class="fw-bold mt-2" style="color: #8B1A2B;">Hospital Management System</h3>
+                    <p class="text-muted">Sign in to your account</p>
+                </div>
+                <form method="POST" action="{{ url_for('auth.login') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" name="username" class="form-control" required autofocus>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" name="password" id="loginPassword" class="form-control" required>
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('loginPassword', this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" name="remember" class="form-check-input" id="remember">
+                        <label class="form-check-label" for="remember">Remember me</label>
+                    </div>
+                    <button type="submit" class="btn w-100 py-2 fw-bold" style="background-color: #8B1A2B; color: #fff; border: none;">
+                        <i class="bi bi-box-arrow-in-right"></i> Sign In
+                    </button>
+                </form>
+                <hr class="my-4">
+                <div class="text-center">
+                    <p class="text-muted mb-0">Don't have an account?</p>
+                    <a href="{{ url_for('auth.register') }}" style="color: #8B1A2B; font-weight: 600;">Register here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

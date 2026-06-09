@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Create Medical Record{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> New Medical Record - {{ patient.full_name }}</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Chief Complaint</label>
+                            <textarea name="chief_complaint" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Symptoms</label>
+                            <textarea name="symptoms" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Diagnosis *</label>
+                            <textarea name="diagnosis" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Treatment Plan</label>
+                            <textarea name="treatment_plan" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Medications Prescribed</label>
+                            <textarea name="medications_prescribed" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Lab Tests Ordered</label>
+                            <textarea name="lab_tests_ordered" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Lab Results</label>
+                            <textarea name="lab_results" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Vital Signs</label>
+                            <textarea name="vital_signs" class="form-control" rows="3" placeholder="BP, HR, Temp, RR, SpO2..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Additional Notes</label>
+                            <textarea name="notes" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Follow-up Date</label>
+                            <input type="date" name="follow_up_date" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Save Record</button>
+                        <a href="{{ url_for('doctor.view_patient', patient_id=patient.id) }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

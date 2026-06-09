@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Perform Triage{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-activity"></i> Triage Assessment</h5>
+                <strong>{{ patient.full_name }} <span class="badge bg-secondary">{{ patient.age }} yrs / {{ patient.gender }}</span></strong>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-12"><h6 class="border-bottom pb-2 text-danger"><i class="bi bi-heart-pulse"></i> Vital Signs</h6></div>
+                        <div class="col-md-3">
+                            <label class="form-label">BP Systolic (mmHg)</label>
+                            <input type="number" name="bp_systolic" class="form-control" value="{{ triage.blood_pressure_systolic if triage else '' }}" placeholder="120">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">BP Diastolic (mmHg)</label>
+                            <input type="number" name="bp_diastolic" class="form-control" value="{{ triage.blood_pressure_diastolic if triage else '' }}" placeholder="80">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Heart Rate (bpm)</label>
+                            <input type="number" name="heart_rate" class="form-control" value="{{ triage.heart_rate if triage else '' }}" placeholder="72">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Temperature (°C)</label>
+                            <input type="number" step="0.1" name="temperature" class="form-control" value="{{ triage.temperature if triage else '' }}" placeholder="36.5">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Weight (kg)</label>
+                            <input type="number" step="0.1" name="weight" class="form-control" value="{{ triage.weight if triage else '' }}" placeholder="70">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Height (cm)</label>
+                            <input type="number" step="0.1" name="height" class="form-control" value="{{ triage.height if triage else '' }}" placeholder="170">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Respiratory Rate (/min)</label>
+                            <input type="number" name="respiratory_rate" class="form-control" value="{{ triage.respiratory_rate if triage else '' }}" placeholder="16">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Oxygen Saturation (%)</label>
+                            <input type="number" name="oxygen_saturation" class="form-control" value="{{ triage.oxygen_saturation if triage else '' }}" placeholder="98">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Pain Level (0-10)</label>
+                            <select name="pain_level" class="form-select">
+                                <option value="">None</option>
+                                {% for i in range(0, 11) %}
+                                <option value="{{ i }}" {{ 'selected' if triage and triage.pain_level == i }}>{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12"><h6 class="border-bottom pb-2 mt-2 text-danger"><i class="bi bi-chat-dots"></i> Assessment</h6></div>
+                        <div class="col-12">
+                            <label class="form-label">Chief Complaint</label>
+                            <textarea name="chief_complaint" class="form-control" rows="2">{{ triage.chief_complaint if triage else '' }}</textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Nurse Assessment / Notes</label>
+                            <textarea name="assessment" class="form-control" rows="3">{{ triage.assessment if triage else '' }}</textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Priority *</label>
+                            <select name="priority" class="form-select" required>
+                                <option value="low" {{ 'selected' if triage and triage.priority == 'low' }}>Low</option>
+                                <option value="medium" {{ 'selected' if not triage or triage.priority == 'medium' }}>Medium</option>
+                                <option value="high" {{ 'selected' if triage and triage.priority == 'high' }}>High</option>
+                                <option value="critical" {{ 'selected' if triage and triage.priority == 'critical' }}>Critical</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Assigned Doctor *</label>
+                            <select name="assigned_doctor_id" class="form-select" required>
+                                <option value="">Select Doctor</option>
+                                {% for d in doctors %}
+                                <option value="{{ d.id }}" {{ 'selected' if triage and triage.assigned_doctor_id == d.id }}>{{ d.user.name }} - {{ d.specialization }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-danger flex-fill"><i class="bi bi-check-lg"></i> Complete Triage & Send to Doctor</button>
+                        <a href="{{ url_for('nurse.triage_queue') }}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

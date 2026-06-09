@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-bell"></i> Notifications</h4>
+</div>
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 small">
+                <thead class="table-light">
+                    <tr><th style="width:35px">S/N</th><th>Title</th><th>Message</th><th>Type</th><th>Date</th><th>Status</th></tr>
+                </thead>
+                <tbody>
+                    {% for n in notifications.items %}
+                    <tr class="{{ '' if n.is_read else 'table-info' }}">
+                        <td>{{ loop.index }}</td>
+                        <td><strong>{{ n.title }}</strong></td>
+                        <td>{{ n.message }}</td>
+                        <td><span class="badge bg-{{ 'danger' if n.notification_type == 'emergency' else 'info' if n.notification_type == 'info' else 'warning' if n.notification_type == 'reminder' else 'secondary' }}">{{ n.notification_type }}</span></td>
+                        <td>{{ n.created_at.strftime('%d-%m-%Y %H:%M') if n.created_at else '-' }}</td>
+                        <td>{% if n.is_read %}<span class="badge bg-secondary">Read</span>{% else %}<span class="badge bg-primary">New</span>{% endif %}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="text-center py-4 text-muted">No notifications</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% if notifications.pages > 1 %}
+<nav class="mt-3"><ul class="pagination justify-content-center small">
+    {% for page_num in notifications.iter_pages() %}
+        {% if page_num %}
+        <li class="page-item {{ 'active' if page_num == notifications.page else '' }}">
+            <a class="page-link" href="{{ url_for('auth.notifications', page=page_num) }}">{{ page_num }}</a>
+        </li>
+        {% endif %}
+    {% endfor %}
+</ul></nav>
+{% endif %}
+{% endblock %}

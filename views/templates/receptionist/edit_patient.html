@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+{% block title %}Edit Patient{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h5 class="mb-0"><i class="bi bi-pencil"></i> Edit Patient: {{ patient.full_name }}</h5></div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-4"><label class="form-label">First Name</label><input type="text" name="first_name" class="form-control" value="{{ patient.first_name }}" required></div>
+                        <div class="col-md-4"><label class="form-label">Last Name</label><input type="text" name="last_name" class="form-control" value="{{ patient.last_name }}" required></div>
+                        <div class="col-md-4"><label class="form-label">Date of Birth</label><input type="date" name="date_of_birth" class="form-control dob-input" value="{{ patient.date_of_birth.strftime('%Y-%m-%d') if patient.date_of_birth else '' }}"></div>
+                        <div class="col-md-4"><label class="form-label">Blood Group</label>
+                            <select name="blood_group" class="form-select">
+                                <option value="">Select</option>{% for bg in ['A+','A-','B+','B-','AB+','AB-','O+','O-'] %}
+                                <option value="{{ bg }}" {{ 'selected' if patient.blood_group == bg }}>{{ bg }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6"><label class="form-label">Phone</label><input type="text" name="phone" class="form-control" value="{{ patient.phone }}" required></div>
+                        <div class="col-md-6"><label class="form-label">Email</label><input type="email" name="email" class="form-control" value="{{ patient.email or '' }}"></div>
+                        <div class="col-12"><label class="form-label">Address</label><textarea name="address" class="form-control" rows="2">{{ patient.address or '' }}</textarea></div>
+                        <div class="col-md-4"><label class="form-label">City</label><input type="text" name="city" class="form-control" value="{{ patient.city or '' }}"></div>
+                        <div class="col-md-4"><label class="form-label">State</label><input type="text" name="state" class="form-control" value="{{ patient.state or '' }}"></div>
+                        <div class="col-md-4"><label class="form-label">ZIP</label><input type="text" name="zip_code" class="form-control" value="{{ patient.zip_code or '' }}"></div>
+                        <div class="col-md-6"><label class="form-label">Emergency Contact</label><input type="text" name="emergency_contact_name" class="form-control" value="{{ patient.emergency_contact_name or '' }}"></div>
+                        <div class="col-md-6"><label class="form-label">Emergency Phone</label><input type="text" name="emergency_contact_phone" class="form-control" value="{{ patient.emergency_contact_phone or '' }}"></div>
+                        {% set allergies_list = (patient.allergies or '').split(', ') %}
+                        {% set allergies_btn = patient.allergies if patient.allergies else 'Select...' %}
+                        {% set allergies_is_other = patient.allergies and patient.allergies.startswith('Other') %}
+                        <div class="col-md-6"><label class="form-label">Allergies</label>
+                            <div class="dropdown">
+                                <div class="form-control dd-trigger{{ '' if patient.allergies else ' text-muted' }}" data-bs-toggle="dropdown" role="button" tabindex="0"><span class="dd-text">{{ allergies_btn }}</span></div>
+                                <ul class="dropdown-menu w-100 p-2" style="max-height:220px;overflow-y:auto">
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check dd-none" value="None"> None</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Dust allergy" {{ 'checked' if 'Dust allergy' in allergies_list }}> Dust allergy</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Pollen allergy (seasonal sneezing)" {{ 'checked' if 'Pollen allergy (seasonal sneezing)' in allergies_list }}> Pollen allergy (seasonal sneezing)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Perfume/fragrance sensitivity" {{ 'checked' if 'Perfume/fragrance sensitivity' in allergies_list }}> Perfume/fragrance sensitivity</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Strong smell sensitivity (chemicals, smoke)" {{ 'checked' if 'Strong smell sensitivity (chemicals, smoke)' in allergies_list }}> Strong smell sensitivity (chemicals, smoke)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Mild food intolerance (milk or lactose)" {{ 'checked' if 'Mild food intolerance (milk or lactose)' in allergies_list }}> Mild food intolerance (milk or lactose)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Egg sensitivity (mild stomach upset)" {{ 'checked' if 'Egg sensitivity (mild stomach upset)' in allergies_list }}> Egg sensitivity (mild stomach upset)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Seafood sensitivity (slight itching)" {{ 'checked' if 'Seafood sensitivity (slight itching)' in allergies_list }}> Seafood sensitivity (slight itching)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Soap or detergent irritation" {{ 'checked' if 'Soap or detergent irritation' in allergies_list }}> Soap or detergent irritation</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Cold weather skin sensitivity" {{ 'checked' if 'Cold weather skin sensitivity' in allergies_list }}> Cold weather skin sensitivity</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Insect bite sensitivity (mild swelling/itching)" {{ 'checked' if 'Insect bite sensitivity (mild swelling/itching)' in allergies_list }}> Insect bite sensitivity (mild swelling/itching)</label></li>
+                                    <li class="dd-other-opt"><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Other" {{ 'checked' if allergies_is_other }}> Other</label>
+                                        <input type="text" class="form-control form-control-sm mt-1 dd-other-input" style="{{ 'display:block;' if allergies_is_other else 'display:none;' }}" placeholder="Type your symptoms..." value="{{ patient.allergies.replace('Other: ','') if allergies_is_other and patient.allergies.startswith('Other: ') else '' }}"></li>
+                                </ul>
+                                <input type="hidden" name="allergies" value="{{ patient.allergies or '' }}">
+                            </div>
+                        </div>
+                        {% set chronic_list = (patient.chronic_conditions or '').split(', ') %}
+                        {% set chronic_btn = patient.chronic_conditions if patient.chronic_conditions else 'Select...' %}
+                        {% set chronic_is_other = patient.chronic_conditions and patient.chronic_conditions.startswith('Other') %}
+                        <div class="col-md-6"><label class="form-label">Chronic Conditions</label>
+                            <div class="dropdown">
+                                <div class="form-control dd-trigger{{ '' if patient.chronic_conditions else ' text-muted' }}" data-bs-toggle="dropdown" role="button" tabindex="0"><span class="dd-text">{{ chronic_btn }}</span></div>
+                                <ul class="dropdown-menu w-100 p-2" style="max-height:220px;overflow-y:auto">
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check dd-none" value="None"> None</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Occasional migraine headaches" {{ 'checked' if 'Occasional migraine headaches' in chronic_list }}> Occasional migraine headaches</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Mild asthma (childhood or occasional)" {{ 'checked' if 'Mild asthma (childhood or occasional)' in chronic_list }}> Mild asthma (childhood or occasional)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Acid reflux / heartburn" {{ 'checked' if 'Acid reflux / heartburn' in chronic_list }}> Acid reflux / heartburn</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Mild anemia" {{ 'checked' if 'Mild anemia' in chronic_list }}> Mild anemia</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Sinusitis (recurring sinus issues)" {{ 'checked' if 'Sinusitis (recurring sinus issues)' in chronic_list }}> Sinusitis (recurring sinus issues)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Mild eczema" {{ 'checked' if 'Mild eczema' in chronic_list }}> Mild eczema</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Occasional back pain" {{ 'checked' if 'Occasional back pain' in chronic_list }}> Occasional back pain</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Mild hypertension (borderline / family-related monitoring)" {{ 'checked' if 'Mild hypertension (borderline / family-related monitoring)' in chronic_list }}> Mild hypertension (borderline / family-related monitoring)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Menstrual cramps (dysmenorrhea)" {{ 'checked' if 'Menstrual cramps (dysmenorrhea)' in chronic_list }}> Menstrual cramps (dysmenorrhea)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Allergic rhinitis (hay fever)" {{ 'checked' if 'Allergic rhinitis (hay fever)' in chronic_list }}> Allergic rhinitis (hay fever)</label></li>
+                                    <li class="dd-other-opt"><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Other" {{ 'checked' if chronic_is_other }}> Other</label>
+                                        <input type="text" class="form-control form-control-sm mt-1 dd-other-input" style="{{ 'display:block;' if chronic_is_other else 'display:none;' }}" placeholder="Type your symptoms..." value="{{ patient.chronic_conditions.replace('Other: ','') if chronic_is_other and patient.chronic_conditions.startswith('Other: ') else '' }}"></li>
+                                </ul>
+                                <input type="hidden" name="chronic_conditions" value="{{ patient.chronic_conditions or '' }}">
+                            </div>
+                        </div>
+                        {% set meds_list = (patient.current_medications or '').split(', ') %}
+                        {% set meds_btn = patient.current_medications if patient.current_medications else 'Select...' %}
+                        {% set meds_is_other = patient.current_medications and patient.current_medications.startswith('Other') %}
+                        <div class="col-md-6"><label class="form-label">Current Medications</label>
+                            <div class="dropdown">
+                                <div class="form-control dd-trigger{{ '' if patient.current_medications else ' text-muted' }}" data-bs-toggle="dropdown" role="button" tabindex="0"><span class="dd-text">{{ meds_btn }}</span></div>
+                                <ul class="dropdown-menu w-100 p-2" style="max-height:220px;overflow-y:auto">
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check dd-none" value="None"> None</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Paracetamol - occasional use for headache" {{ 'checked' if 'Paracetamol - occasional use for headache' in meds_list }}> Paracetamol - occasional use for headache</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Ibuprofen - pain relief when needed" {{ 'checked' if 'Ibuprofen - pain relief when needed' in meds_list }}> Ibuprofen - pain relief when needed</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Vitamin C supplements - daily" {{ 'checked' if 'Vitamin C supplements - daily' in meds_list }}> Vitamin C supplements - daily</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Multivitamins - daily" {{ 'checked' if 'Multivitamins - daily' in meds_list }}> Multivitamins - daily</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Iron tablets - if mildly anemic" {{ 'checked' if 'Iron tablets - if mildly anemic' in meds_list }}> Iron tablets - if mildly anemic</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Antacid (e.g. for heartburn) - as needed" {{ 'checked' if 'Antacid (e.g. for heartburn) - as needed' in meds_list }}> Antacid (e.g. for heartburn) - as needed</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Antihistamine (for allergies) - occasional use" {{ 'checked' if 'Antihistamine (for allergies) - occasional use' in meds_list }}> Antihistamine (for allergies) - occasional use</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Cough syrup - when sick" {{ 'checked' if 'Cough syrup - when sick' in meds_list }}> Cough syrup - when sick</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Flu medicine - short-term use" {{ 'checked' if 'Flu medicine - short-term use' in meds_list }}> Flu medicine - short-term use</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Oral rehydration salts - when needed" {{ 'checked' if 'Oral rehydration salts - when needed' in meds_list }}> Oral rehydration salts - when needed</label></li>
+                                    <li class="dd-other-opt"><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Other" {{ 'checked' if meds_is_other }}> Other</label>
+                                        <input type="text" class="form-control form-control-sm mt-1 dd-other-input" style="{{ 'display:block;' if meds_is_other else 'display:none;' }}" placeholder="Type your symptoms..." value="{{ patient.current_medications.replace('Other: ','') if meds_is_other and patient.current_medications.startswith('Other: ') else '' }}"></li>
+                                </ul>
+                                <input type="hidden" name="current_medications" value="{{ patient.current_medications or '' }}">
+                            </div>
+                        </div>
+                        {% set surgery_list = (patient.past_surgeries or '').split(', ') %}
+                        {% set surgery_btn = patient.past_surgeries if patient.past_surgeries else 'Select...' %}
+                        {% set surgery_is_other = patient.past_surgeries and patient.past_surgeries.startswith('Other') %}
+                        <div class="col-md-6"><label class="form-label">Past Surgeries</label>
+                            <div class="dropdown">
+                                <div class="form-control dd-trigger{{ '' if patient.past_surgeries else ' text-muted' }}" data-bs-toggle="dropdown" role="button" tabindex="0"><span class="dd-text">{{ surgery_btn }}</span></div>
+                                <ul class="dropdown-menu w-100 p-2" style="max-height:220px;overflow-y:auto">
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check dd-none" value="None"> None</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Appendectomy" {{ 'checked' if 'Appendectomy' in surgery_list }}> Appendectomy</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Cholecystectomy" {{ 'checked' if 'Cholecystectomy' in surgery_list }}> Cholecystectomy</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Hernia Repair" {{ 'checked' if 'Hernia Repair' in surgery_list }}> Hernia Repair</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Joint Replacement" {{ 'checked' if 'Joint Replacement' in surgery_list }}> Joint Replacement</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="C-Section" {{ 'checked' if 'C-Section' in surgery_list }}> C-Section</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Tonsillectomy" {{ 'checked' if 'Tonsillectomy' in surgery_list }}> Tonsillectomy</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Heart Bypass" {{ 'checked' if 'Heart Bypass' in surgery_list }}> Heart Bypass</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Spinal Surgery" {{ 'checked' if 'Spinal Surgery' in surgery_list }}> Spinal Surgery</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Tumor Removal" {{ 'checked' if 'Tumor Removal' in surgery_list }}> Tumor Removal</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Organ Transplant" {{ 'checked' if 'Organ Transplant' in surgery_list }}> Organ Transplant</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Knee Surgery" {{ 'checked' if 'Knee Surgery' in surgery_list }}> Knee Surgery</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Hip Surgery" {{ 'checked' if 'Hip Surgery' in surgery_list }}> Hip Surgery</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Multiple" {{ 'checked' if 'Multiple' in surgery_list }}> Multiple</label></li>
+                                    <li class="dd-other-opt"><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Other" {{ 'checked' if surgery_is_other }}> Other</label>
+                                        <input type="text" class="form-control form-control-sm mt-1 dd-other-input" style="{{ 'display:block;' if surgery_is_other else 'display:none;' }}" placeholder="Type your symptoms..." value="{{ patient.past_surgeries.replace('Other: ','') if surgery_is_other and patient.past_surgeries.startswith('Other: ') else '' }}"></li>
+                                </ul>
+                                <input type="hidden" name="past_surgeries" value="{{ patient.past_surgeries or '' }}">
+                            </div>
+                        </div>
+                        {% set family_list = (patient.family_medical_history or '').split(', ') %}
+                        {% set family_btn = patient.family_medical_history if patient.family_medical_history else 'Select...' %}
+                        {% set family_is_other = patient.family_medical_history and patient.family_medical_history.startswith('Other') %}
+                        <div class="col-12"><label class="form-label">Family Medical History</label>
+                            <div class="dropdown">
+                                <div class="form-control dd-trigger{{ '' if patient.family_medical_history else ' text-muted' }}" data-bs-toggle="dropdown" role="button" tabindex="0"><span class="dd-text">{{ family_btn }}</span></div>
+                                <ul class="dropdown-menu w-100 p-2" style="max-height:220px;overflow-y:auto">
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check dd-none" value="None"> None</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="High blood pressure (hypertension)" {{ 'checked' if 'High blood pressure (hypertension)' in family_list }}> High blood pressure (hypertension)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Diabetes (type 2)" {{ 'checked' if 'Diabetes (type 2)' in family_list }}> Diabetes (type 2)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Asthma" {{ 'checked' if 'Asthma' in family_list }}> Asthma</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Ulcer / stomach issues" {{ 'checked' if 'Ulcer / stomach issues' in family_list }}> Ulcer / stomach issues</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Migraine headaches" {{ 'checked' if 'Migraine headaches' in family_list }}> Migraine headaches</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Arthritis / joint pain" {{ 'checked' if 'Arthritis / joint pain' in family_list }}> Arthritis / joint pain</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Sickle cell trait" {{ 'checked' if 'Sickle cell trait' in family_list }}> Sickle cell trait</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Allergies (dust, food, etc.)" {{ 'checked' if 'Allergies (dust, food, etc.)' in family_list }}> Allergies (dust, food, etc.)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Eye problems (short-sightedness)" {{ 'checked' if 'Eye problems (short-sightedness)' in family_list }}> Eye problems (short-sightedness)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Obesity / weight-related issues" {{ 'checked' if 'Obesity / weight-related issues' in family_list }}> Obesity / weight-related issues</label></li>
+                                    <li class="dd-other-opt"><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Other" {{ 'checked' if family_is_other }}> Other</label>
+                                        <input type="text" class="form-control form-control-sm mt-1 dd-other-input" style="{{ 'display:block;' if family_is_other else 'display:none;' }}" placeholder="Type your symptoms..." value="{{ patient.family_medical_history.replace('Other: ','') if family_is_other and patient.family_medical_history.startswith('Other: ') else '' }}"></li>
+                                </ul>
+                                <input type="hidden" name="family_medical_history" value="{{ patient.family_medical_history or '' }}">
+                            </div>
+                        </div>
+                        {% set ins_list = (patient.insurance_provider or '').split(', ') %}
+                        {% set ins_btn = patient.insurance_provider if patient.insurance_provider else 'Select...' %}
+                        {% set ins_is_other = patient.insurance_provider and patient.insurance_provider.startswith('Other') %}
+                        <div class="col-md-6"><label class="form-label">Insurance Provider</label>
+                            <div class="dropdown">
+                                <div class="form-control dd-trigger{{ '' if patient.insurance_provider else ' text-muted' }}" data-bs-toggle="dropdown" role="button" tabindex="0"><span class="dd-text">{{ ins_btn }}</span></div>
+                                <ul class="dropdown-menu w-100 p-2" style="max-height:220px;overflow-y:auto">
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check dd-none" value="None / Self-Pay" {{ 'checked' if 'None' in ins_list or 'None / Self-Pay' in ins_list }}> None / Self-Pay</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="AXA Mansard Health" {{ 'checked' if 'AXA Mansard Health' in ins_list }}> AXA Mansard Health</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Hygeia HMO" {{ 'checked' if 'Hygeia HMO' in ins_list }}> Hygeia HMO</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Avon HMO" {{ 'checked' if 'Avon HMO' in ins_list }}> Avon HMO</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Reliance HMO" {{ 'checked' if 'Reliance HMO' in ins_list }}> Reliance HMO</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Leadway Health" {{ 'checked' if 'Leadway Health' in ins_list }}> Leadway Health</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Bupa" {{ 'checked' if 'Bupa' in ins_list }}> Bupa</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Cigna" {{ 'checked' if 'Cigna' in ins_list }}> Cigna</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Allianz" {{ 'checked' if 'Allianz' in ins_list }}> Allianz</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Liberty Blue (Liberty Health Services)" {{ 'checked' if 'Liberty Blue (Liberty Health Services)' in ins_list }}> Liberty Blue (Liberty Health Services)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Redcare HMO" {{ 'checked' if 'Redcare HMO' in ins_list }}> Redcare HMO</label></li>
+                                    <li class="dd-other-opt"><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Other" {{ 'checked' if ins_is_other }}> Other</label>
+                                        <input type="text" class="form-control form-control-sm mt-1 dd-other-input" style="{{ 'display:block;' if ins_is_other else 'display:none;' }}" placeholder="Type provider name..." value="{{ patient.insurance_provider.replace('Other: ','') if ins_is_other and patient.insurance_provider.startswith('Other: ') else '' }}"></li>
+                                </ul>
+                                <input type="hidden" name="insurance_provider" value="{{ patient.insurance_provider or '' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6"><label class="form-label">Policy Number</label><input type="text" name="insurance_policy_number" class="form-control" value="{{ patient.insurance_policy_number or '' }}"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-4"><i class="bi bi-save"></i> Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% block extra_js %}
+<style>
+.dd-trigger::after { display: none !important; }
+.dd-trigger { cursor: pointer; background: #fff; }
+.dd-trigger:focus { border-color: #8B1A2B; box-shadow: 0 0 0 0.2rem rgba(139,26,43,0.25); }
+.dd-other-opt { padding: 0 0.5rem 0.5rem; }
+.dd-other-opt .dropdown-item { padding: 0.25rem 0; }
+</style>
+<script>
+$(document).on('change', '.dd-check', function() {
+    var dd = $(this).closest('.dropdown');
+    var checked = dd.find('.dd-check:checked');
+    var hidden = dd.find('input[type="hidden"]');
+    var otherInput = dd.find('.dd-other-input');
+    if ($(this).val() === 'Other' && this.checked) {
+        dd.find('.dd-none').prop('checked', false);
+        dd.find('.dd-check').not('[value="Other"]').not('.dd-none').prop('checked', false);
+        otherInput.show().focus();
+        hidden.val('');
+        dd.find('.dd-text').text('Select...').parent().addClass('text-muted');
+        return;
+    }
+    if ($(this).val() === 'Other' && !this.checked) {
+        otherInput.hide().val('');
+        if (checked.length === 0) {
+            dd.find('.dd-text').text('Select...').parent().addClass('text-muted');
+            hidden.val('');
+        } else {
+            updateDisplay(dd, checked, hidden);
+        }
+        return;
+    }
+    if ($(this).hasClass('dd-none')) {
+        if (this.checked) {
+            dd.find('.dd-check').not(this).prop('checked', false);
+            otherInput.hide().val('');
+            dd.find('.dd-text').text($(this).val()).parent().removeClass('text-muted');
+            hidden.val($(this).val());
+            return;
+        } else {
+            dd.find('.dd-text').text('Select...').parent().addClass('text-muted');
+            hidden.val('');
+            return;
+        }
+    } else {
+        if (this.checked) {
+            dd.find('.dd-none').prop('checked', false);
+        }
+    }
+    updateDisplay(dd, checked, hidden);
+});
+function updateDisplay(dd, checked, hidden) {
+    var vals = checked.filter(function() { return !$(this).hasClass('dd-none'); }).map(function() { return this.value; }).get();
+    if (vals.length === 0) {
+        dd.find('.dd-text').text('Select...').parent().addClass('text-muted');
+        hidden.val('');
+    } else {
+        dd.find('.dd-text').text(vals.join(', ')).parent().removeClass('text-muted');
+        hidden.val(vals.join(', '));
+    }
+}
+$(document).on('input', '.dd-other-input', function() {
+    var dd = $(this).closest('.dropdown');
+    var val = this.value.trim();
+    if (val) {
+        dd.find('input[type="hidden"]').val('Other: ' + val);
+        dd.find('.dd-text').text('Other: ' + val);
+    } else {
+        dd.find('input[type="hidden"]').val('Other');
+        dd.find('.dd-text').text('Other');
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}Schedule Appointment{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h5 class="mb-0"><i class="bi bi-calendar-plus"></i> Schedule Appointment</h5></div>
+            <div class="card-body">
+                <form method="POST" id="appointmentForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Patient *</label>
+                            <select name="patient_id" id="patientSelect" class="form-select" required>
+                                <option value="">Select Patient</option>
+                                {% for p in patients %}<option value="{{ p.id }}" {{ 'selected' if request.args.get('patient_id')|string == p.id|string }}>{{ p.full_name }} ({{ p.phone }})</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Doctor *</label>
+                            <select name="doctor_id" id="doctorSelect" class="form-select" required>
+                                <option value="">Select Doctor</option>
+                                {% for d in doctors %}<option value="{{ d.id }}" data-department="{{ d.department_id }}" {{ 'selected' if selected_doctor_id == d.id }}>{{ d.user.name }} - {{ d.specialization }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Date *</label>
+                            <input type="date" name="appointment_date" id="apptDate" class="form-control" required min="{{ today }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Time *</label>
+                            <select name="appointment_time" id="apptTime" class="form-select" required>
+                                <option value="">Select time</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="form-check form-switch mt-2">
+                                <input type="checkbox" name="is_emergency" class="form-check-input" role="switch" id="emergencySwitch">
+                                <label class="form-check-label text-danger" for="emergencySwitch"><i class="bi bi-exclamation-triangle"></i> Emergency</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Reason for Visit *</label>
+                            <select name="reason" class="form-select" required>
+                                <option value="">Select reason</option>
+                                <option value="Check-up / General Consultation">Check-up / General Consultation</option>
+                                <option value="Follow-up">Follow-up</option>
+                                <option value="Vaccination">Vaccination</option>
+                                <option value="Lab Test / Blood Work">Lab Test / Blood Work</option>
+                                <option value="Prescription Refill">Prescription Refill</option>
+                                <option value="Emergency">Emergency</option>
+                                <option value="Referral">Referral</option>
+                                <option value="Health Screening">Health Screening</option>
+                                <option value="Pre-employment Medical">Pre-employment Medical</option>
+                                <option value="Antenatal Check-up">Antenatal Check-up</option>
+                                <option value="Dental Check-up">Dental Check-up</option>
+                                <option value="Eye Examination">Eye Examination</option>
+                                <option value="Physiotherapy">Physiotherapy</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Symptoms *</label>
+                            <select name="symptoms" class="form-select" required>
+                                <option value="">Select symptom</option>
+                                <option value="Fever">Fever</option>
+                                <option value="Headache">Headache</option>
+                                <option value="Cough">Cough</option>
+                                <option value="Cold / Catarrh">Cold / Catarrh</option>
+                                <option value="Sore Throat">Sore Throat</option>
+                                <option value="Body Pain / Joint Pain">Body Pain / Joint Pain</option>
+                                <option value="Stomach Pain">Stomach Pain</option>
+                                <option value="Nausea / Vomiting">Nausea / Vomiting</option>
+                                <option value="Diarrhea">Diarrhea</option>
+                                <option value="Dizziness">Dizziness</option>
+                                <option value="Fatigue / Weakness">Fatigue / Weakness</option>
+                                <option value="Chest Pain">Chest Pain</option>
+                                <option value="Shortness of Breath">Shortness of Breath</option>
+                                <option value="Skin Rash">Skin Rash</option>
+                                <option value="Back Pain">Back Pain</option>
+                                <option value="Insomnia">Insomnia</option>
+                                <option value="Loss of Appetite">Loss of Appetite</option>
+                                <option value="Weight Loss / Gain">Weight Loss / Gain</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3"><i class="bi bi-save"></i> Schedule Appointment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function loadSlots() {
+    const doctorId = document.getElementById('doctorSelect').value;
+    const date = document.getElementById('apptDate').value;
+    const timeSelect = document.getElementById('apptTime');
+    timeSelect.innerHTML = '<option value="">Loading...</option>';
+    if (doctorId && date) {
+        fetch(`{{ url_for('receptionist.get_available_slots') }}?doctor_id=${doctorId}&date=${date}`)
+            .then(r => r.json()).then(slots => {
+                if (slots.length > 0) {
+                    timeSelect.innerHTML = '';
+                    slots.forEach(s => {
+                        timeSelect.innerHTML += `<option value="${s}">${s}</option>`;
+                    });
+                    timeSelect.value = slots[0];
+                } else {
+                    timeSelect.innerHTML = '<option value="">No available slots</option>';
+                }
+            });
+    } else {
+        timeSelect.innerHTML = '<option value="">Select doctor & date first</option>';
+    }
+}
+$(document).ready(function() {
+    $('#patientSelect').select2({placeholder: 'Search patient...', allowClear: true});
+    $('#doctorSelect').select2({placeholder: 'Select doctor...'});
+    $('#apptDate').on('change', loadSlots);
+    $('#doctorSelect').on('change', loadSlots);
+    if ($('#doctorSelect').val() && $('#apptDate').val()) {
+        loadSlots();
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Billing Management{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-credit-card"></i> Billing</h4>
+    <a href="{{ url_for('admin.create_bill') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> New Bill</a>
+</div>
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 small">
+                <thead class="table-light">
+                    <tr><th>Bill #</th><th>Patient</th><th>Total</th><th>Paid</th><th>Balance</th><th>Method</th><th>Status</th><th>Date</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                    {% for b in bills %}
+                    <tr>
+                        <td>{{ b.bill_number }}</td>
+                        <td>{{ b.patient.full_name if b.patient else 'N/A' }}</td>
+                        <td>${{ "%.2f"|format(b.total_amount) }}</td>
+                        <td>${{ "%.2f"|format(b.paid_amount) }}</td>
+                        <td>${{ "%.2f"|format(b.balance_due) }}</td>
+                        <td><small>{{ b.payment_method or '-' }}</small></td>
+                        <td><span class="badge bg-{{ 'success' if b.payment_status == 'paid' else 'warning' if b.payment_status == 'partial' else 'danger' }}">{{ b.payment_status }}</span></td>
+                        <td><small>{{ b.created_at.strftime('%d-%m-%Y') if b.created_at else '' }}</small></td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('admin.view_bill', bill_id=b.id) }}" class="btn btn-outline-info" title="View"><i class="bi bi-eye"></i></a>
+                                {% if b.payment_status != 'paid' %}
+                                <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#payModal{{ b.id }}" title="Pay"><i class="bi bi-cash"></i></button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    <div class="modal fade" id="payModal{{ b.id }}">
+                        <div class="modal-dialog"><div class="modal-content">
+                            <div class="modal-header"><h5 class="modal-title">Payment - {{ b.bill_number }}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                            <form method="POST" action="{{ url_for('admin.pay_bill', bill_id=b.id) }}">
+                                <div class="modal-body">
+                                    <p>Total: ${{ "%.2f"|format(b.total_amount) }} | Due: ${{ "%.2f"|format(b.balance_due) }}</p>
+                                    <div class="mb-3"><label class="form-label">Amount</label><input type="number" step="0.01" name="amount" class="form-control" max="{{ b.balance_due }}" required></div>
+                                    <div class="mb-3"><label class="form-label">Method</label>
+                                        <select name="payment_method" class="form-select">
+                                            <option value="cash">Cash</option><option value="card">Card</option><option value="insurance">Insurance</option><option value="bank_transfer">Bank Transfer</option><option value="mobile_money">Mobile Money</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer"><button type="submit" class="btn btn-primary">Record Payment</button></div>
+                            </form>
+                        </div></div>
+                    </div>
+                    {% else %}
+                    <tr><td colspan="9" class="text-center py-4 text-muted">No bills found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% if bills.pages > 1 %}
+<nav class="mt-3"><ul class="pagination justify-content-center">
+    {% for page_num in bills.iter_pages() %}
+        {% if page_num %}
+        <li class="page-item {{ 'active' if page_num == bills.page else '' }}">
+            <a class="page-link" href="{{ url_for('admin.manage_billing', page=page_num, status=status_filter) }}">{{ page_num }}</a>
+        </li>
+        {% endif %}
+    {% endfor %}
+</ul></nav>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}My Patients{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-person-hearts"></i> My Patients</h4>
+    <form class="d-flex" method="GET">
+        <input type="text" name="search" class="form-control me-2" placeholder="Search..." value="{{ search }}">
+        <button class="btn btn-outline-primary" type="submit"><i class="bi bi-search"></i></button>
+    </form>
+</div>
+<div class="row g-3">
+    {% for p in patients %}
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-person-circle text-primary me-3" style="font-size: 2.5rem;"></i>
+                    <div>
+                        <h6 class="mb-0">{{ p.full_name }}</h6>
+                        <small class="text-muted">{{ p.gender }}, {{ p.age }} yrs</small>
+                    </div>
+                </div>
+                <hr>
+                <div class="small">
+                    <p><i class="bi bi-telephone"></i> {{ p.phone }}</p>
+                    <p><i class="bi bi-droplet"></i> {{ p.blood_group or 'N/A' }}</p>
+                    <p><i class="bi bi-exclamation-triangle"></i> {{ p.allergies or 'No allergies' }}</p>
+                </div>
+                <a href="{{ url_for('doctor.view_patient', patient_id=p.id) }}" class="btn btn-outline-primary btn-sm w-100"><i class="bi bi-eye"></i> View</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12"><div class="alert alert-info">No patients assigned yet.</div></div>
+    {% endfor %}
+</div>
+{% endblock %}

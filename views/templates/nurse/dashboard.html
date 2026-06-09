@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Nurse Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-heart-pulse"></i> Nurse Dashboard</h4>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-bg-danger shadow-sm h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">{{ pending_triage }}</h5>
+                <p class="card-text small">Pending Triage</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-success shadow-sm h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">{{ completed_today }}</h5>
+                <p class="card-text small">Completed Today</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-bg-info shadow-sm h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">{{ total_triaged_today }}</h5>
+                <p class="card-text small">Total Triaged Today</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h6 class="mb-0"><i class="bi bi-clock-history"></i> Recent Triage Activity</h6>
+        <a href="{{ url_for('nurse.triage_queue') }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-list"></i> View Queue</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped mb-0 small">
+                <thead><tr><th>Patient</th><th>Priority</th><th>Status</th><th>Time</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for t in recent_triages %}
+                    <tr>
+                        <td>{{ t.patient.full_name }}</td>
+                        <td><span class="badge {% if t.priority == 'critical' %}bg-danger{% elif t.priority == 'high' %}bg-warning{% else %}bg-success{% endif %}">{{ t.priority }}</span></td>
+                        <td><span class="badge {% if t.status == 'pending' %}bg-warning{% else %}bg-success{% endif %}">{{ t.status }}</span></td>
+                        <td>{{ t.created_at.strftime('%H:%M') if t.created_at else '-' }}</td>
+                        <td>
+                            {% if t.status == 'pending' %}
+                            <a href="{{ url_for('nurse.perform_triage', patient_id=t.patient_id) }}" class="btn btn-sm btn-danger">Triage</a>
+                            {% else %}
+                            <a href="{{ url_for('nurse.view_patient', patient_id=t.patient_id) }}" class="btn btn-sm btn-outline-secondary">View</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" class="text-center text-muted">No triage activity yet</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

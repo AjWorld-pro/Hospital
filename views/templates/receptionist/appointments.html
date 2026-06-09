@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Appointments{% endblock %}
+{% block extra_css %}
+<style>
+.status-steps { display: flex; align-items: center; gap: 0; font-size: 0.65rem; white-space: nowrap; }
+.status-step .circle { width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; flex-shrink: 0; border: 2px solid #dee2e6; background: #fff; color: #6c757d; line-height: 1; }
+.status-step .circle.done { background: #198754; border-color: #198754; color: #fff; }
+.status-step .circle.active { background: #ffc107; border-color: #ffc107; color: #000; }
+.status-arrow { width: 14px; height: 2px; background: #dee2e6; flex-shrink: 0; margin: 0 1px; }
+.status-arrow.done { background: #198754; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-calendar-check"></i> Appointments</h4>
+    <div>
+        <a href="{{ url_for('receptionist.emergency_queue') }}" class="btn btn-outline-danger me-2"><i class="bi bi-exclamation-triangle"></i> Emergency Queue</a>
+        <form class="d-flex" method="GET">
+            <input type="date" name="date" class="form-control me-2" value="{{ date_filter }}">
+            <select name="status" class="form-select me-2" style="width:auto;">
+                <option value="">All Status</option>
+                {% for s in ['scheduled','confirmed','in_progress','completed','cancelled','no_show'] %}
+                <option value="{{ s }}" {{ 'selected' if status_filter == s }}>{{ s|capitalize }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-outline-primary" type="submit"><i class="bi bi-filter"></i></button>
+        </form>
+    </div>
+</div>
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 small">
+                <thead class="table-light">
+                    <tr><th style="width:35px">S/N</th><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th style="min-width:200px">Status</th><th style="width:80px">Emergency</th><th style="width:50px"></th></tr>
+                </thead>
+                <tbody>
+                    {% for a in appointments %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td><a href="{{ url_for('receptionist.view_patient', patient_id=a.patient_id) }}">{{ a.patient.full_name if a.patient else 'N/A' }}</a></td>
+                        <td>{{ a.doctor.user.name if a.doctor else 'N/A' }}</td>
+                        <td>{{ a.appointment_date.strftime('%d-%m-%Y') }}</td>
+                        <td>{{ a.appointment_time }}</td>
+                        <td>
+                            {% if a.status in ['cancelled', 'no_show'] %}
+                            <span class="badge bg-danger">{{ a.status }}</span>
+                            {% else %}
+                            <div class="status-steps">
+                                {% set stages = ['scheduled', 'confirmed', 'in_progress', 'completed'] %}
+                                {% set labels = ['Sched', 'Conf', 'Prog', 'Done'] %}
+                                {% for stage in stages %}
+                                {% set idx = loop.index0 %}
+                                <div class="status-step">
+                                    <div class="circle {% if stages.index(a.status) > idx %}done{% elif stages.index(a.status) == idx %}active{% endif %}">{{ idx + 1 }}</div>
+                                </div>
+                                {% if idx < 3 %}<div class="status-arrow {% if stages.index(a.status) > idx %}done{% endif %}"></div>{% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">{% if a.is_emergency %}<span class="badge bg-danger">Yes</span>{% else %}<span class="text-muted">No</span>{% endif %}</td>
+                        <td>
+                            {% if a.status != 'cancelled' and a.status != 'completed' and a.status != 'no_show' %}
+                            <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal{{ a.id }}" title="Cancel"><i class="bi bi-x-circle"></i></button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <div class="modal fade" id="cancelModal{{ a.id }}">
+                        <div class="modal-dialog"><div class="modal-content">
+                            <div class="modal-header"><h5 class="modal-title">Cancel Appointment</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                            <form method="POST" action="{{ url_for('receptionist.cancel_appointment', appt_id=a.id) }}">
+                                <div class="modal-body">
+                                    <p>Cancel appointment for <strong>{{ a.patient.full_name if a.patient else 'N/A' }}</strong>?</p>
+                                    <div class="mb-3"><label class="form-label">Reason</label><textarea name="reason" class="form-control" rows="2"></textarea></div>
+                                </div>
+                                <div class="modal-footer"><button type="submit" class="btn btn-danger">Confirm Cancel</button></div>
+                            </form>
+                        </div></div>
+                    </div>
+                    {% else %}
+                    <tr><td colspan="8" class="text-center py-4 text-muted">No appointments found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

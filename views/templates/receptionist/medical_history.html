@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Medical History - {{ patient.full_name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 no-print">
+    <h4><i class="bi bi-clock-history"></i> Medical History - {{ patient.full_name }}</h4>
+    <div>
+        <button class="btn btn-outline-primary" onclick="window.print()"><i class="bi bi-printer"></i> Print Report</button>
+        <a href="{{ url_for('receptionist.view_patient', patient_id=patient.id) }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+</div>
+<div class="card shadow-sm mb-3 print-header" style="display:none;">
+    <div class="card-body text-center">
+        <h4>Hospital Management System</h4>
+        <h5>Medical History Report</h5>
+        <p class="mb-0">{{ patient.full_name }} | DOB: {{ patient.date_of_birth.strftime('%d-%m-%Y') }} | Gender: {{ patient.gender }}</p>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h5 class="mb-0">Visit History</h5></div>
+            <div class="card-body p-0">
+                {% for r in records %}
+                <div class="border-bottom p-3">
+                    <div class="d-flex justify-content-between">
+                        <h6 class="text-primary">Visit: {{ r.visit_date.strftime('%d-%m-%Y %H:%M') }}</h6>
+                        <span class="badge bg-{{ 'secondary' if r.is_discharged else 'info' }}">{{ 'Discharged' if r.is_discharged else 'Active' }}</span>
+                    </div>
+                    <div class="row small mt-2">
+                        <div class="col-md-6"><strong>Doctor:</strong> {{ r.doctor.user.name if r.doctor else 'N/A' }}</div>
+                        <div class="col-md-6"><strong>Symptoms:</strong> {{ r.symptoms or 'N/A' }}</div>
+                        <div class="col-12 mt-1"><strong>Diagnosis:</strong> {{ r.diagnosis }}</div>
+                        <div class="col-12 mt-1"><strong>Treatment:</strong> {{ r.treatment_plan or 'N/A' }}</div>
+                        <div class="col-md-6 mt-1"><strong>Medications:</strong> {{ r.medications_prescribed or 'N/A' }}</div>
+                        <div class="col-md-6 mt-1"><strong>Lab Results:</strong> {{ r.lab_results or 'N/A' }}</div>
+                        {% if r.vital_signs %}<div class="col-12 mt-1"><strong>Vitals:</strong> {{ r.vital_signs }}</div>{% endif %}
+                        {% if r.notes %}<div class="col-12 mt-1"><strong>Notes:</strong> {{ r.notes }}</div>{% endif %}
+                        {% if r.follow_up_date %}<div class="col-12 mt-1"><strong>Follow-up:</strong> {{ r.follow_up_date.strftime('%d-%m-%Y') }}</div>{% endif %}
+                        {% if r.discharge_summary %}<div class="col-12 mt-1"><strong>Discharge Summary:</strong> {{ r.discharge_summary }}</div>{% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-muted">No medical history recorded.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h5 class="mb-0"><i class="bi bi-capsule"></i> Active Prescriptions</h5></div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for p in prescriptions %}
+                    <li class="list-group-item">
+                        <strong>{{ p.medication_name }}</strong><br>
+                        <small>{{ p.dosage }} - {{ p.frequency }}</small><br>
+                        <small class="text-muted">{{ p.duration or '' }}</small>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-muted text-center">No active prescriptions</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="card shadow-sm mt-3">
+            <div class="card-header bg-white"><h5 class="mb-0">Patient Info</h5></div>
+            <div class="card-body small">
+                <p><strong>Blood:</strong> {{ patient.blood_group or 'N/A' }}</p>
+                <p><strong>Allergies:</strong> {{ patient.allergies or 'None' }}</p>
+                <p><strong>Chronic:</strong> {{ patient.chronic_conditions or 'None' }}</p>
+                <p><strong>Current Medications:</strong> {{ patient.current_medications or 'None' }}</p>
+                <p><strong>Insurance:</strong> {{ patient.insurance_provider or 'N/A' }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

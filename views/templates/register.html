@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Register - Hospital Management System{% endblock %}
+{% block content %}
+<div class="row justify-content-center align-items-center min-vh-80">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-person-plus" style="font-size: 3rem; color: #8B1A2B;"></i>
+                    <h3 class="fw-bold mt-2" style="color: #8B1A2B;">Create Account</h3>
+                    <p class="text-muted">Register for a new account</p>
+                </div>
+                <form method="POST" action="{{ url_for('auth.register') }}">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name *</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Username *</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-at"></i></span>
+                            <input type="text" name="username" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" name="email" class="form-control">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Role *</label>
+                        <select name="role" class="form-select" required onchange="toggleSpecialization(this.value)">
+                            <option value="">Select Role</option>
+                            <option value="admin">Admin</option>
+                            <option value="doctor">Doctor</option>
+                            <option value="nurse">Nurse</option>
+                            <option value="receptionist">Receptionist</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="specializationField" style="display:none;">
+                        <label class="form-label">Specialization *</label>
+                        <select name="specialization" class="form-select">
+                            <option value="">Select Specialization</option>
+                            <option value="General Physician">General Physician</option>
+                            <option value="Cardiologist">Cardiologist</option>
+                            <option value="Dermatologist">Dermatologist</option>
+                            <option value="Pediatrician">Pediatrician</option>
+                            <option value="Gynecologist">Gynecologist</option>
+                            <option value="Orthopedic Surgeon">Orthopedic Surgeon</option>
+                            <option value="Neurologist">Neurologist</option>
+                            <option value="Psychiatrist">Psychiatrist</option>
+                            <option value="Ophthalmologist">Ophthalmologist</option>
+                            <option value="ENT Specialist">ENT Specialist</option>
+                            <option value="Dentist">Dentist</option>
+                            <option value="Radiologist">Radiologist</option>
+                            <option value="Anesthesiologist">Anesthesiologist</option>
+                            <option value="Pathologist">Pathologist</option>
+                            <option value="Pulmonologist">Pulmonologist</option>
+                            <option value="Gastroenterologist">Gastroenterologist</option>
+                            <option value="Nephrologist">Nephrologist</option>
+                            <option value="Oncologist">Oncologist</option>
+                            <option value="Urologist">Urologist</option>
+                            <option value="Endocrinologist">Endocrinologist</option>
+                            <option value="Rheumatologist">Rheumatologist</option>
+                            <option value="Surgeon">Surgeon</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password *</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" name="password" id="regPassword" class="form-control" required minlength="6">
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('regPassword', this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password *</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                            <input type="password" name="confirm_password" id="regConfirmPassword" class="form-control" required minlength="6">
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('regConfirmPassword', this)">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn w-100 py-2 fw-bold" style="background-color: #8B1A2B; color: #fff; border: none;">
+                        <i class="bi bi-person-plus"></i> Register
+                    </button>
+                </form>
+                <hr class="my-4">
+                <div class="text-center">
+                    <p class="text-muted mb-0">Already have an account?</p>
+                    <a href="{{ url_for('auth.login') }}" style="color: #8B1A2B; font-weight: 600;">Sign in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function toggleSpecialization(role) {
+    const field = document.getElementById('specializationField');
+    const select = field.querySelector('select');
+    field.style.display = role === 'doctor' ? 'block' : 'none';
+    select.required = role === 'doctor';
+}
+</script>
+{% endblock %}

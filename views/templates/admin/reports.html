@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-file-earmark-bar-graph"></i> System Reports</h4>
+    <div class="btn-group">
+        <a href="{{ url_for('admin.reports', type='daily') }}" class="btn btn-sm btn-outline-primary {{ 'active' if report_type == 'daily' }}">Daily</a>
+        <a href="{{ url_for('admin.reports', type='weekly') }}" class="btn btn-sm btn-outline-primary {{ 'active' if report_type == 'weekly' }}">Weekly</a>
+        <a href="{{ url_for('admin.reports', type='monthly') }}" class="btn btn-sm btn-outline-primary {{ 'active' if report_type == 'monthly' }}">Monthly</a>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card border-primary shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-calendar-check text-primary" style="font-size: 2rem;"></i>
+                <h3 class="mt-2">{{ appointments }}</h3>
+                <p class="text-muted mb-0">Appointments ({{ report_type }})</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-success shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-currency-dollar text-success" style="font-size: 2rem;"></i>
+                <h3 class="mt-2">${{ "%.2f"|format(revenue) }}</h3>
+                <p class="text-muted mb-0">Revenue ({{ report_type }})</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-info shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-person-plus text-info" style="font-size: 2rem;"></i>
+                <h3 class="mt-2">{{ new_patients }}</h3>
+                <p class="text-muted mb-0">New Patients ({{ report_type }})</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card shadow-sm mt-3">
+    <div class="card-header bg-white"><h5 class="mb-0"><i class="bi bi-bar-chart"></i> Revenue Chart</h5></div>
+    <div class="card-body">
+        <canvas id="revenueChart" height="200"></canvas>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+fetch('{{ url_for("admin.api_stats") }}?days=30').then(r=>r.json()).then(data=>{
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'line',
+        data: {
+            labels: data.revenue.map(r=>r.date),
+            datasets: [{
+                label: 'Revenue',
+                data: data.revenue.map(r=>r.total),
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13,110,253,0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+});
+</script>
+{% endblock %}

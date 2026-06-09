@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+{% block title %}Register Patient{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h5 class="mb-0"><i class="bi bi-person-plus"></i> Patient Registration</h5></div>
+            <div class="card-body">
+                <form method="POST">
+                    <h6 class="text-primary"><i class="bi bi-info-circle"></i> Personal Information</h6>
+                    <hr>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4"><label class="form-label">First Name *</label><input type="text" name="first_name" class="form-control" required></div>
+                        <div class="col-md-4"><label class="form-label">Last Name *</label><input type="text" name="last_name" class="form-control" required></div>
+                        <div class="col-md-4"><label class="form-label">Date of Birth *</label><input type="date" name="date_of_birth" class="form-control dob-input" required></div>
+                        <div class="col-md-3"><label class="form-label">Gender *</label>
+                            <select name="gender" class="form-select" required>
+                                <option value="">Select</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3"><label class="form-label">Blood Group</label>
+                            <select name="blood_group" class="form-select">
+                                <option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3"><label class="form-label">Phone *</label><input type="text" name="phone" class="form-control" required></div>
+                        <div class="col-md-3"><label class="form-label">Email</label><input type="email" name="email" class="form-control"></div>
+                    </div>
+                    <h6 class="text-primary mt-3"><i class="bi bi-geo-alt"></i> Address</h6>
+                    <hr>
+                    <div class="row g-3 mb-3">
+                        <div class="col-12"><label class="form-label">Address</label><textarea name="address" class="form-control" rows="2"></textarea></div>
+                        <div class="col-md-4"><label class="form-label">City</label><input type="text" name="city" class="form-control"></div>
+                        <div class="col-md-4"><label class="form-label">State</label><input type="text" name="state" class="form-control"></div>
+                        <div class="col-md-4"><label class="form-label">ZIP Code</label><input type="text" name="zip_code" class="form-control"></div>
+                    </div>
+                    <h6 class="text-primary mt-3"><i class="bi bi-telephone"></i> Emergency Contact</h6>
+                    <hr>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4"><label class="form-label">Contact Name</label><input type="text" name="emergency_contact_name" class="form-control"></div>
+                        <div class="col-md-4"><label class="form-label">Contact Phone</label><input type="text" name="emergency_contact_phone" class="form-control"></div>
+                        <div class="col-md-4"><label class="form-label">Relation</label><input type="text" name="emergency_contact_relation" class="form-control" placeholder="Spouse, Parent, etc."></div>
+                    </div>
+                    <h6 class="text-primary mt-3"><i class="bi bi-heart-pulse"></i> Medical Information</h6>
+                    <hr>
+                    <div class="row g-3 mb-3 dd-section">
+                        <div class="col-md-6"><label class="form-label">Allergies</label>
+                            <div class="dropdown">
+                                <div class="form-control dd-trigger text-muted" data-bs-toggle="dropdown" role="button" tabindex="0"><span class="dd-text">Select...</span></div>
+                                <ul class="dropdown-menu w-100 p-2" style="max-height:220px;overflow-y:auto">
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check dd-none" value="None"> None</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Dust allergy"> Dust allergy</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Pollen allergy (seasonal sneezing)"> Pollen allergy (seasonal sneezing)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Perfume/fragrance sensitivity"> Perfume/fragrance sensitivity</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Strong smell sensitivity (chemicals, smoke)"> Strong smell sensitivity (chemicals, smoke)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Mild food intolerance (milk or lactose)"> Mild food intolerance (milk or lactose)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Egg sensitivity (mild stomach upset)"> Egg sensitivity (mild stomach upset)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Seafood sensitivity (slight itching)"> Seafood sensitivity (slight itching)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Soap or detergent irritation"> Soap or detergent irritation</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Cold weather skin sensitivity"> Cold weather skin sensitivity</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Insect bite sensitivity (mild swelling/itching)"> Insect bite sensitivity (mild swelling/itching)</label></li>
+                                    <li class="dd-other-opt"><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Other"> Other</label>
+                                        <input type="text" class="form-control form-control-sm mt-1 dd-other-input" style="display:none;" placeholder="Type your symptoms..."></li>
+                                </ul>
+                                <input type="hidden" name="allergies" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-6"><label class="form-label">Chronic Conditions</label>
+                            <div class="dropdown">
+                                <div class="form-control dd-trigger text-muted" data-bs-toggle="dropdown" role="button" tabindex="0"><span class="dd-text">Select...</span></div>
+                                <ul class="dropdown-menu w-100 p-2" style="max-height:220px;overflow-y:auto">
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check dd-none" value="None"> None</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Occasional migraine headaches"> Occasional migraine headaches</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Mild asthma (childhood or occasional)"> Mild asthma (childhood or occasional)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Acid reflux / heartburn"> Acid reflux / heartburn</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Mild anemia"> Mild anemia</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Sinusitis (recurring sinus issues)"> Sinusitis (recurring sinus issues)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Mild eczema"> Mild eczema</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Occasional back pain"> Occasional back pain</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Mild hypertension (borderline / family-related monitoring)"> Mild hypertension (borderline / family-related monitoring)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Menstrual cramps (dysmenorrhea)"> Menstrual cramps (dysmenorrhea)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Allergic rhinitis (hay fever)"> Allergic rhinitis (hay fever)</label></li>
+                                    <li class="dd-other-opt"><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Other"> Other</label>
+                                        <input type="text" class="form-control form-control-sm mt-1 dd-other-input" style="display:none;" placeholder="Type your symptoms..."></li>
+                                </ul>
+                                <input type="hidden" name="chronic_conditions" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-6"><label class="form-label">Current Medications</label>
+                            <div class="dropdown">
+                                <div class="form-control dd-trigger text-muted" data-bs-toggle="dropdown" role="button" tabindex="0"><span class="dd-text">Select...</span></div>
+                                <ul class="dropdown-menu w-100 p-2" style="max-height:220px;overflow-y:auto">
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check dd-none" value="None"> None</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Paracetamol - occasional use for headache"> Paracetamol - occasional use for headache</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Ibuprofen - pain relief when needed"> Ibuprofen - pain relief when needed</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Vitamin C supplements - daily"> Vitamin C supplements - daily</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Multivitamins - daily"> Multivitamins - daily</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Iron tablets - if mildly anemic"> Iron tablets - if mildly anemic</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Antacid (e.g. for heartburn) - as needed"> Antacid (e.g. for heartburn) - as needed</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Antihistamine (for allergies) - occasional use"> Antihistamine (for allergies) - occasional use</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Cough syrup - when sick"> Cough syrup - when sick</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Flu medicine - short-term use"> Flu medicine - short-term use</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Oral rehydration salts - when needed"> Oral rehydration salts - when needed</label></li>
+                                    <li class="dd-other-opt"><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Other"> Other</label>
+                                        <input type="text" class="form-control form-control-sm mt-1 dd-other-input" style="display:none;" placeholder="Type your symptoms..."></li>
+                                </ul>
+                                <input type="hidden" name="current_medications" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-6"><label class="form-label">Past Surgeries</label>
+                            <div class="dropdown">
+                                <div class="form-control dd-trigger text-muted" data-bs-toggle="dropdown" role="button" tabindex="0"><span class="dd-text">Select...</span></div>
+                                <ul class="dropdown-menu w-100 p-2" style="max-height:220px;overflow-y:auto">
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check dd-none" value="None"> None</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Appendectomy"> Appendectomy</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Cholecystectomy"> Cholecystectomy</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Hernia Repair"> Hernia Repair</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Joint Replacement"> Joint Replacement</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="C-Section"> C-Section</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Tonsillectomy"> Tonsillectomy</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Heart Bypass"> Heart Bypass</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Spinal Surgery"> Spinal Surgery</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Tumor Removal"> Tumor Removal</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Organ Transplant"> Organ Transplant</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Knee Surgery"> Knee Surgery</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Hip Surgery"> Hip Surgery</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Multiple"> Multiple</label></li>
+                                    <li class="dd-other-opt"><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Other"> Other</label>
+                                        <input type="text" class="form-control form-control-sm mt-1 dd-other-input" style="display:none;" placeholder="Type your symptoms..."></li>
+                                </ul>
+                                <input type="hidden" name="past_surgeries" value="">
+                            </div>
+                        </div>
+                        <div class="col-12"><label class="form-label">Family Medical History</label>
+                            <div class="dropdown">
+                                <div class="form-control dd-trigger text-muted" data-bs-toggle="dropdown" role="button" tabindex="0"><span class="dd-text">Select...</span></div>
+                                <ul class="dropdown-menu w-100 p-2" style="max-height:220px;overflow-y:auto">
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check dd-none" value="None"> None</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="High blood pressure (hypertension)"> High blood pressure (hypertension)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Diabetes (type 2)"> Diabetes (type 2)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Asthma"> Asthma</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Ulcer / stomach issues"> Ulcer / stomach issues</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Migraine headaches"> Migraine headaches</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Arthritis / joint pain"> Arthritis / joint pain</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Sickle cell trait"> Sickle cell trait</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Allergies (dust, food, etc.)"> Allergies (dust, food, etc.)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Eye problems (short-sightedness)"> Eye problems (short-sightedness)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Obesity / weight-related issues"> Obesity / weight-related issues</label></li>
+                                    <li class="dd-other-opt"><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Other"> Other</label>
+                                        <input type="text" class="form-control form-control-sm mt-1 dd-other-input" style="display:none;" placeholder="Type your symptoms..."></li>
+                                </ul>
+                                <input type="hidden" name="family_medical_history" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <h6 class="text-primary mt-3"><i class="bi bi-shield-check"></i> Insurance</h6>
+                    <hr>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6"><label class="form-label">Insurance Provider</label>
+                            <div class="dropdown">
+                                <div class="form-control dd-trigger text-muted" data-bs-toggle="dropdown" role="button" tabindex="0"><span class="dd-text">Select...</span></div>
+                                <ul class="dropdown-menu w-100 p-2" style="max-height:220px;overflow-y:auto">
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check dd-none" value="None / Self-Pay"> None / Self-Pay</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="AXA Mansard Health"> AXA Mansard Health</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Hygeia HMO"> Hygeia HMO</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Avon HMO"> Avon HMO</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Reliance HMO"> Reliance HMO</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Leadway Health"> Leadway Health</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Bupa"> Bupa</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Cigna"> Cigna</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Allianz"> Allianz</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Liberty Blue (Liberty Health Services)"> Liberty Blue (Liberty Health Services)</label></li>
+                                    <li><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Redcare HMO"> Redcare HMO</label></li>
+                                    <li class="dd-other-opt"><label class="dropdown-item"><input type="checkbox" class="form-check-input me-2 dd-check" value="Other"> Other</label>
+                                        <input type="text" class="form-control form-control-sm mt-1 dd-other-input" style="display:none;" placeholder="Type provider name..."></li>
+                                </ul>
+                                <input type="hidden" name="insurance_provider" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-6"><label class="form-label">Policy Number</label><input type="text" name="insurance_policy_number" class="form-control"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3"><i class="bi bi-save"></i> Register Patient</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% block extra_js %}
+<style>
+.dd-trigger::after { display: none !important; }
+.dd-trigger { cursor: pointer; background: #fff; }
+.dd-trigger:focus { border-color: #8B1A2B; box-shadow: 0 0 0 0.2rem rgba(139,26,43,0.25); }
+.dd-other-opt { padding: 0 0.5rem 0.5rem; }
+.dd-other-opt .dropdown-item { padding: 0.25rem 0; }
+</style>
+<script>
+$(document).on('change', '.dd-check', function() {
+    var dd = $(this).closest('.dropdown');
+    var checked = dd.find('.dd-check:checked');
+    var hidden = dd.find('input[type="hidden"]');
+    var otherInput = dd.find('.dd-other-input');
+    if ($(this).val() === 'Other' && this.checked) {
+        dd.find('.dd-none').prop('checked', false);
+        dd.find('.dd-check').not('[value="Other"]').not('.dd-none').prop('checked', false);
+        otherInput.show().focus();
+        hidden.val('');
+        dd.find('.dd-text').text('Select...').parent().addClass('text-muted');
+        return;
+    }
+    if ($(this).val() === 'Other' && !this.checked) {
+        otherInput.hide().val('');
+        if (checked.length === 0) {
+            dd.find('.dd-text').text('Select...').parent().addClass('text-muted');
+            hidden.val('');
+        } else {
+            updateDisplay(dd, checked, hidden);
+        }
+        return;
+    }
+    if ($(this).hasClass('dd-none')) {
+        if (this.checked) {
+            dd.find('.dd-check').not(this).prop('checked', false);
+            otherInput.hide().val('');
+            dd.find('.dd-text').text($(this).val()).parent().removeClass('text-muted');
+            hidden.val($(this).val());
+            return;
+        } else {
+            dd.find('.dd-text').text('Select...').parent().addClass('text-muted');
+            hidden.val('');
+            return;
+        }
+    } else {
+        if (this.checked) {
+            dd.find('.dd-none').prop('checked', false);
+        }
+    }
+    updateDisplay(dd, checked, hidden);
+});
+function updateDisplay(dd, checked, hidden) {
+    var vals = checked.filter(function() { return !$(this).hasClass('dd-none'); }).map(function() { return this.value; }).get();
+    if (vals.length === 0) {
+        dd.find('.dd-text').text('Select...').parent().addClass('text-muted');
+        hidden.val('');
+    } else {
+        dd.find('.dd-text').text(vals.join(', ')).parent().removeClass('text-muted');
+        hidden.val(vals.join(', '));
+    }
+}
+$(document).on('input', '.dd-other-input', function() {
+    var dd = $(this).closest('.dropdown');
+    var val = this.value.trim();
+    if (val) {
+        dd.find('input[type="hidden"]').val('Other: ' + val);
+        dd.find('.dd-text').text('Other: ' + val);
+    } else {
+        dd.find('input[type="hidden"]').val('Other');
+        dd.find('.dd-text').text('Other');
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block title %}Patient Details{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-person-heart"></i> {{ patient.full_name }}</h4>
+    <div>
+        <a href="{{ url_for('admin.patient_medical_history', patient_id=patient.id) }}" class="btn btn-outline-info"><i class="bi bi-clock-history"></i> Medical History</a>
+        {% if patient.is_active %}
+        <a href="{{ url_for('admin.toggle_patient_archive', patient_id=patient.id) }}" class="btn btn-outline-secondary" onclick="return confirm('Archive this patient?')"><i class="bi bi-archive"></i> Archive</a>
+        {% else %}
+        <a href="{{ url_for('admin.toggle_patient_archive', patient_id=patient.id) }}" class="btn btn-outline-success" onclick="return confirm('Restore this patient?')"><i class="bi bi-arrow-counterclockwise"></i> Restore</a>
+        {% endif %}
+        <a href="{{ url_for('admin.manage_patients') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <i class="bi bi-person-circle" style="font-size: 4rem;"></i>
+                    <h5 class="mt-2">{{ patient.full_name }}</h5>
+                    <span class="badge bg-{{ 'success' if patient.is_active else 'secondary' }}">{{ 'Active' if patient.is_active else 'Discharged' }}</span>
+                </div>
+                <hr>
+                <div class="small">
+                    <p><i class="bi bi-gender-{{ 'male' if patient.gender == 'Male' else 'female' }}"></i> {{ patient.gender }}</p>
+                    <p><i class="bi bi-calendar"></i> DOB: {{ patient.date_of_birth.strftime('%d-%m-%Y') }} (Age: {{ patient.age }})</p>
+                    <p><i class="bi bi-droplet"></i> Blood: {{ patient.blood_group or 'N/A' }}</p>
+                    <p><i class="bi bi-telephone"></i> {{ patient.phone }}</p>
+                    <p><i class="bi bi-envelope"></i> {{ patient.email or 'N/A' }}</p>
+                    <p><i class="bi bi-geo-alt"></i> {{ patient.city or '' }}, {{ patient.state or '' }}</p>
+                </div>
+                <hr>
+                <h6>Emergency Contact</h6>
+                <div class="small">
+                    <p><strong>{{ patient.emergency_contact_name or 'N/A' }}</strong></p>
+                    <p><i class="bi bi-telephone"></i> {{ patient.emergency_contact_phone or '' }}</p>
+                    <p><i class="bi bi-people"></i> {{ patient.emergency_contact_relation or '' }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow-sm mt-3">
+            <div class="card-header bg-white"><h6 class="mb-0">Insurance</h6></div>
+            <div class="card-body small">
+                <p>Provider: {{ patient.insurance_provider or 'N/A' }}</p>
+                <p>Policy: {{ patient.insurance_policy_number or 'N/A' }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h6 class="mb-0"><i class="bi bi-activity"></i> Triage Status</h6>
+                <a href="{{ url_for('nurse.perform_triage', patient_id=patient.id) }}" class="btn btn-sm btn-outline-danger"><i class="bi bi-heart-pulse"></i> Triage</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0 small">
+                        <thead class="table-light"><tr><th>Date</th><th>Nurse</th><th>BP</th><th>HR</th><th>Temp</th><th>Priority</th><th>Doctor</th><th>Status</th></tr></thead>
+                        <tbody>
+                            {% for t in triages %}
+                            <tr>
+                                <td>{{ t.created_at.strftime('%d-%m-%Y %H:%M') if t.created_at else '-' }}</td>
+                                <td>{{ t.nurse.name if t.nurse else '-' }}</td>
+                                <td>{{ t.blood_pressure_systolic or '-' }}/{{ t.blood_pressure_diastolic or '-' }}</td>
+                                <td>{{ t.heart_rate or '-' }}</td>
+                                <td>{{ t.temperature or '-' }}°C</td>
+                                <td><span class="badge {% if t.priority == 'critical' %}bg-danger{% elif t.priority == 'high' %}bg-warning{% elif t.priority == 'medium' %}bg-info{% else %}bg-secondary{% endif %}">{{ t.priority }}</span></td>
+                                <td>{{ t.assigned_doctor.user.name if t.assigned_doctor else '-' }}</td>
+                                <td><span class="badge {% if t.status == 'pending' %}bg-warning{% else %}bg-success{% endif %}">{{ t.status }}</span></td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="8" class="text-center py-2 text-muted">Not yet triaged</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-white d-flex justify-content-between">
+                <h6 class="mb-0"><i class="bi bi-clipboard-pulse"></i> Medical Info</h6>
+            </div>
+            <div class="card-body small">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <h6>Allergies</h6>
+                        <p class="text-muted">{{ patient.allergies or 'None recorded' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Chronic Conditions</h6>
+                        <p class="text-muted">{{ patient.chronic_conditions or 'None recorded' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Current Medications</h6>
+                        <p class="text-muted">{{ patient.current_medications or 'None recorded' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Past Surgeries</h6>
+                        <p class="text-muted">{{ patient.past_surgeries or 'None recorded' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-white"><h6 class="mb-0"><i class="bi bi-calendar-check"></i> Appointments</h6></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light"><tr><th>Date</th><th>Doctor</th><th>Department</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for a in appointments %}
+                        <tr>
+                            <td>{{ a.appointment_date.strftime('%d-%m-%Y') }} {{ a.appointment_time }}</td>
+                            <td>{{ a.doctor.user.name if a.doctor else 'N/A' }}</td>
+                            <td>{{ a.department.name if a.department else 'N/A' }}</td>
+                            <td><span class="badge bg-{{ 'success' if a.status == 'completed' else 'warning' if a.status == 'scheduled' else 'danger' if a.status == 'cancelled' else 'info' }}">{{ a.status }}</span></td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted py-2">No appointments</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-white"><h6 class="mb-0"><i class="bi bi-file-text"></i> Medical Records</h6></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light"><tr><th>Date</th><th>Doctor</th><th>Diagnosis</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for r in records %}
+                        <tr>
+                            <td>{{ r.visit_date.strftime('%d-%m-%Y') }}</td>
+                            <td>{{ r.doctor.user.name if r.doctor else 'N/A' }}</td>
+                            <td>{{ r.diagnosis[:50] }}{% if r.diagnosis|length > 50 %}...{% endif %}</td>
+                            <td>{% if r.is_discharged %}<span class="badge bg-secondary">Discharged</span>{% else %}<span class="badge bg-info">Active</span>{% endif %}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted py-2">No records</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h6 class="mb-0"><i class="bi bi-credit-card"></i> Bills</h6></div>
+            <div class="card-body p-0">
+                <table class="table table-sm mb-0">
+                    <thead class="table-light"><tr><th>Bill #</th><th>Total</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for b in bills %}
+                        <tr>
+                            <td>{{ b.bill_number }}</td>
+                            <td>${{ "%.2f"|format(b.total_amount) }}</td>
+                            <td>${{ "%.2f"|format(b.paid_amount) }}</td>
+                            <td>${{ "%.2f"|format(b.balance_due) }}</td>
+                            <td><span class="badge bg-{{ 'success' if b.payment_status == 'paid' else 'warning' if b.payment_status == 'partial' else 'danger' }}">{{ b.payment_status }}</span></td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="text-center text-muted py-2">No bills</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

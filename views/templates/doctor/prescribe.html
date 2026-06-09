@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Prescribe Medication{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h5 class="mb-0"><i class="bi bi-capsule"></i> New Prescription for {{ patient.full_name }}</h5></div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label">Medication Name *</label>
+                            <input type="text" name="medication_name" class="form-control" required placeholder="e.g., Amoxicillin">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Dosage *</label>
+                            <input type="text" name="dosage" class="form-control" required placeholder="e.g., 500mg">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Frequency *</label>
+                            <input type="text" name="frequency" class="form-control" required placeholder="e.g., 3 times daily">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Duration</label>
+                            <input type="text" name="duration" class="form-control" placeholder="e.g., 7 days">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Route</label>
+                            <select name="route" class="form-select">
+                                <option value="oral">Oral</option><option value="intravenous">IV</option>
+                                <option value="intramuscular">IM</option><option value="topical">Topical</option>
+                                <option value="sublingual">Sublingual</option><option value="inhalation">Inhalation</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Instructions</label>
+                            <textarea name="instructions" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Refills</label>
+                            <input type="number" name="refill_count" class="form-control" value="0">
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Add Prescription</button>
+                        <a href="{{ url_for('doctor.view_patient', patient_id=patient.id) }}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

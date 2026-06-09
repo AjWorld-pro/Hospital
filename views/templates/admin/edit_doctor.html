@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Edit Doctor{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-pencil"></i> Edit Doctor: {{ doctor.user.name }}</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Specialization</label>
+                            <input type="text" name="specialization" class="form-control" value="{{ doctor.specialization }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Department</label>
+                            <select name="department_id" id="departmentSelect" class="form-select" onchange="toggleDeptInput()">
+                                <optgroup label="Existing Departments">
+                                    {% for d in departments %}
+                                    <option value="{{ d.id }}" {{ 'selected' if doctor.department_id == d.id }}>{{ d.name }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                <optgroup label="Standard Departments">
+                                    {% for dept_name in standard_departments %}
+                                    <option value="new_{{ dept_name }}">{{ dept_name }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                <option value="0">Other...</option>
+                            </select>
+                            <input type="text" name="custom_department" id="customDepartment" class="form-control mt-1" style="display:none;" placeholder="Enter department name">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Qualifications</label>
+                            <textarea name="qualifications" class="form-control" rows="2">{{ doctor.qualifications or '' }}</textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Experience (years)</label>
+                            <input type="number" name="experience_years" class="form-control" value="{{ doctor.experience_years }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Consultation Fee ($)</label>
+                            <input type="number" step="0.01" name="consultation_fee" class="form-control" value="{{ doctor.consultation_fee }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Status</label>
+                            <div class="form-check form-switch mt-2">
+                                <input type="checkbox" name="is_available" class="form-check-input" role="switch" id="availSwitch" {{ 'checked' if doctor.is_available }}>
+                                <label class="form-check-label" for="availSwitch">Available</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-3"><i class="bi bi-save"></i> Update Doctor</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function toggleDeptInput() {
+    var sel = document.getElementById('departmentSelect');
+    var custom = document.getElementById('customDepartment');
+    if (sel.value === '0') {
+        custom.style.display = 'block';
+        custom.required = true;
+    } else {
+        custom.style.display = 'none';
+        custom.required = false;
+    }
+}
+$(function() { toggleDeptInput(); });
+</script>
+{% endblock %}

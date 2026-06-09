@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}{{ patient.full_name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-person"></i> {{ patient.full_name }}</h4>
+    <div>
+        <a href="{{ url_for('nurse.perform_triage', patient_id=patient.id) }}" class="btn btn-sm btn-danger"><i class="bi bi-activity"></i> Triage</a>
+        <a href="{{ url_for('nurse.medical_history', patient_id=patient.id) }}" class="btn btn-sm btn-outline-info"><i class="bi bi-clock-history"></i> History</a>
+        <a href="{{ url_for('nurse.patients') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white"><h6 class="mb-0"><i class="bi bi-info-circle"></i> Demographics</h6></div>
+            <div class="card-body small">
+                <p><strong>DOB:</strong> {{ patient.date_of_birth.strftime('%d-%m-%Y') }} (Age: {{ patient.age }})</p>
+                <p><strong>Gender:</strong> {{ patient.gender }}</p>
+                <p><strong>Blood Group:</strong> {{ patient.blood_group or 'N/A' }}</p>
+                <p><strong>Phone:</strong> {{ patient.phone }}</p>
+                <p><strong>Email:</strong> {{ patient.email or 'N/A' }}</p>
+                <p><strong>Address:</strong> {{ patient.address or 'N/A' }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h6 class="mb-0"><i class="bi bi-clock-history"></i> Triage History</h6></div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped mb-0 small">
+                        <thead><tr><th>#</th><th>Date</th><th>Nurse</th><th>BP</th><th>HR</th><th>Temp</th><th>SpO₂</th><th>Priority</th><th>Doctor</th></tr></thead>
+                        <tbody>
+                            {% for t in triages %}
+                            <tr>
+                                <td>{{ t.id }}</td>
+                                <td>{{ t.created_at.strftime('%d-%m-%Y %H:%M') if t.created_at else '-' }}</td>
+                                <td>{{ t.nurse.name if t.nurse else '-' }}</td>
+                                <td>{{ t.blood_pressure_systolic or '-' }}/{{ t.blood_pressure_diastolic or '-' }}</td>
+                                <td>{{ t.heart_rate or '-' }}</td>
+                                <td>{{ t.temperature or '-' }}</td>
+                                <td>{{ t.oxygen_saturation or '-' }}%</td>
+                                <td><span class="badge {% if t.priority == 'critical' %}bg-danger{% elif t.priority == 'high' %}bg-warning{% elif t.priority == 'medium' %}bg-info{% else %}bg-secondary{% endif %}">{{ t.priority }}</span></td>
+                                <td>{{ t.assigned_doctor.user.name if t.assigned_doctor else '-' }}</td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="9" class="text-center text-muted py-4">No triage records</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

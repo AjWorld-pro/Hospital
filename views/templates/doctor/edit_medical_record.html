@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Edit Medical Record{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white"><h5 class="mb-0"><i class="bi bi-pencil"></i> Edit Medical Record</h5></div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row g-3">
+                        <div class="col-12"><label class="form-label">Chief Complaint</label><textarea name="chief_complaint" class="form-control" rows="2">{{ record.chief_complaint or '' }}</textarea></div>
+                        <div class="col-md-6"><label class="form-label">Symptoms</label><textarea name="symptoms" class="form-control" rows="3">{{ record.symptoms or '' }}</textarea></div>
+                        <div class="col-md-6"><label class="form-label">Diagnosis</label><textarea name="diagnosis" class="form-control" rows="3" required>{{ record.diagnosis }}</textarea></div>
+                        <div class="col-12"><label class="form-label">Treatment Plan</label><textarea name="treatment_plan" class="form-control" rows="3">{{ record.treatment_plan or '' }}</textarea></div>
+                        <div class="col-md-6"><label class="form-label">Medications Prescribed</label><textarea name="medications_prescribed" class="form-control" rows="3">{{ record.medications_prescribed or '' }}</textarea></div>
+                        <div class="col-md-6"><label class="form-label">Lab Results</label><textarea name="lab_results" class="form-control" rows="3">{{ record.lab_results or '' }}</textarea></div>
+                        <div class="col-12"><label class="form-label">Notes</label><textarea name="notes" class="form-control" rows="2">{{ record.notes or '' }}</textarea></div>
+                        <div class="col-md-6">
+                            <label class="form-label">Follow-up Date</label>
+                            <input type="date" name="follow_up_date" class="form-control" value="{{ record.follow_up_date.strftime('%Y-%m-%d') if record.follow_up_date else '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch mt-4">
+                                <input type="checkbox" name="is_discharged" class="form-check-input" role="switch" id="dischargeSwitch" {{ 'checked' if record.is_discharged }}>
+                                <label class="form-check-label" for="dischargeSwitch">Discharge Patient</label>
+                            </div>
+                        </div>
+                        <div class="col-12" id="dischargeSummaryField" style="{{ 'display:block' if record.is_discharged else 'display:none' }}">
+                            <label class="form-label">Discharge Summary</label>
+                            <textarea name="discharge_summary" class="form-control" rows="3">{{ record.discharge_summary or '' }}</textarea>
+                        </div>
+                    </div>
+                    <div class="mt-4"><button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Update</button></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.getElementById('dischargeSwitch')?.addEventListener('change', function(){
+    document.getElementById('dischargeSummaryField').style.display = this.checked ? 'block' : 'none';
+});
+</script>
+{% endblock %}

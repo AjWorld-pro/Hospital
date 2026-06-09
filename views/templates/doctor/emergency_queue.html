@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Emergency Queue{% endblock %}
+{% block content %}
+<h4><i class="bi bi-exclamation-triangle text-danger"></i> Emergency Queue</h4>
+<div class="row g-3 mt-2">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-danger">
+            <div class="card-header bg-danger text-white"><h6 class="mb-0"><i class="bi bi-clock"></i> Waiting Patients</h6></div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-danger"><tr><th>#</th><th>Patient</th><th>Priority</th><th>Complaint</th><th>Waiting</th><th>Action</th></tr></thead>
+                    <tbody>
+                        {% for q in queue %}
+                        <tr class="{{ 'table-danger' if q.priority == 'critical' else 'table-warning' if q.priority == 'high' else '' }}">
+                            <td>{{ q.waiting_number }}</td>
+                            <td><strong>{{ q.patient.full_name if q.patient else 'N/A' }}</strong></td>
+                            <td><span class="badge bg-{{ 'danger' if q.priority == 'critical' else 'warning' if q.priority == 'high' else 'info' if q.priority == 'medium' else 'secondary' }}">{{ q.priority }}</span></td>
+                            <td>{{ q.complaint[:30] or '-' }}</td>
+                            <td><span class="badge bg-{{ 'danger' if q.get_waiting_time() else 'secondary' }}">{{ q.get_waiting_time() }}</span></td>
+                            <td><a href="{{ url_for('doctor.attend_emergency', queue_id=q.id) }}" class="btn btn-sm btn-success"><i class="bi bi-play-fill"></i> Attend</a></td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="6" class="text-center py-4 text-muted">No patients in queue.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-success">
+            <div class="card-header bg-success text-white"><h6 class="mb-0"><i class="bi bi-people"></i> Currently Attending</h6></div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for p in active_patients %}
+                    <li class="list-group-item">
+                        <strong>{{ p.patient.full_name if p.patient else 'N/A' }}</strong>
+                        <br><small class="text-muted">{{ p.complaint[:30] }}</small>
+                    </li>
+                    {% else %}
+                    <li class="list-group-item text-muted text-center py-3">No active patients</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

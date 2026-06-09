@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Departments{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-building"></i> Departments</h4>
+    <a href="{{ url_for('admin.create_department') }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Department</a>
+</div>
+<div class="row g-3">
+    {% for d in departments %}
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h5><i class="bi bi-building text-primary"></i> {{ d.name }}</h5>
+                <p class="text-muted small">{{ d.description or 'No description' }}</p>
+                <hr>
+                <div class="small">
+                    <p><i class="bi bi-geo-alt"></i> {{ d.location or 'N/A' }}</p>
+                    <p><i class="bi bi-telephone"></i> {{ d.phone or 'N/A' }}</p>
+                    <p><i class="bi bi-person-badge"></i> {{ d.doctors|length }} doctors</p>
+                </div>
+                <a href="{{ url_for('admin.edit_department', dept_id=d.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12"><div class="alert alert-info">No departments created yet.</div></div>
+    {% endfor %}
+</div>
+{% endblock %}

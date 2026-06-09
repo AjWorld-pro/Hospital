@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}Bill - {{ bill.bill_number }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 no-print">
+    <h4><i class="bi bi-credit-card"></i> Bill: {{ bill.bill_number }}</h4>
+    <div>
+        <button class="btn btn-outline-primary" onclick="window.print()"><i class="bi bi-printer"></i> Print Receipt</button>
+        <a href="{{ url_for('admin.manage_billing') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+</div>
+<div class="row g-3">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Invoice</h5>
+                <span class="badge bg-{{ 'success' if bill.payment_status == 'paid' else 'warning' if bill.payment_status == 'partial' else 'danger' }} fs-6">{{ bill.payment_status|upper }}</span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-sm-6">
+                        <h6 class="text-muted">Patient Information</h6>
+                        <p class="mb-1"><strong>{{ bill.patient.full_name if bill.patient else 'N/A' }}</strong></p>
+                        <p class="mb-1">Phone: {{ bill.patient.phone if bill.patient else '' }}</p>
+                        <p class="mb-0">Email: {{ bill.patient.email if bill.patient else '' }}</p>
+                    </div>
+                    <div class="col-sm-6 text-sm-end">
+                        <h6 class="text-muted">Bill Information</h6>
+                        <p class="mb-1"><strong>Bill #:</strong> {{ bill.bill_number }}</p>
+                        <p class="mb-1"><strong>Date:</strong> {{ bill.created_at.strftime('%d-%m-%Y %H:%M') if bill.created_at else '' }}</p>
+                        <p class="mb-0"><strong>Status:</strong> {{ bill.payment_status }}</p>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered small">
+                        <thead class="table-light">
+                            <tr><th>#</th><th>Item</th><th>Type</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr>
+                        </thead>
+                        <tbody>
+                            {% set has_items = false %}
+                            {% for item in bill.items %}
+                            {% set has_items = true %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ item.item_name }}</td>
+                                <td>{{ item.item_type }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>${{ "%.2f"|format(item.unit_price) }}</td>
+                                <td>${{ "%.2f"|format(item.total_price) }}</td>
+                            </tr>
+                            {% endfor %}
+                            {% if bill.consultation_fee > 0 %}
+                            <tr><td colspan="5">Consultation Fee</td><td>${{ "%.2f"|format(bill.consultation_fee) }}</td></tr>
+                            {% endif %}
+                            {% if bill.lab_charges > 0 %}
+                            <tr><td colspan="5">Lab Charges</td><td>${{ "%.2f"|format(bill.lab_charges) }}</td></tr>
+                            {% endif %}
+                            {% if bill.medication_charges > 0 %}
+                            <tr><td colspan="5">Medication Charges</td><td>${{ "%.2f"|format(bill.medication_charges) }}</td></tr>
+                            {% endif %}
+                            {% if bill.procedure_charges > 0 %}
+                            <tr><td colspan="5">Procedure Charges</td><td>${{ "%.2f"|format(bill.procedure_charges) }}</td></tr>
+                            {% endif %}
+                            {% if bill.room_charges > 0 %}
+                            <tr><td colspan="5">Room Charges</td><td>${{ "%.2f"|format(bill.room_charges) }}</td></tr>
+                            {% endif %}
+                            {% if bill.other_charges > 0 %}
+                            <tr><td colspan="5">Other Charges</td><td>${{ "%.2f"|format(bill.other_charges) }}</td></tr>
+                            {% endif %}
+                            {% if not has_items and bill.consultation_fee == 0 and bill.lab_charges == 0 and bill.medication_charges == 0 and bill.procedure_charges == 0 and bill.room_charges == 0 and bill.other_charges == 0 %}
+                            <tr><td colspan="6" class="text-center text-muted">No charges recorded</td></tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        {% if bill.notes %}
+                        <h6 class="text-muted">Notes</h6>
+                        <p class="small">{{ bill.notes }}</p>
+                        {% endif %}
+                        {% if bill.payment_date %}
+                        <p class="small text-muted mb-0">Payment Date: {{ bill.payment_date.strftime('%d-%m-%Y %H:%M') }}</p>
+                        {% endif %}
+                        {% if bill.payment_method %}
+                        <p class="small text-muted">Payment Method: {{ bill.payment_method }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-sm table-borderless text-end">
+                            <tr><td style="width:50%">Subtotal:</td><td>${{ "%.2f"|format(bill.subtotal) }}</td></tr>
+                            <tr><td>Discount:</td><td>-${{ "%.2f"|format(bill.discount) }}</td></tr>
+                            <tr><td>Tax:</td><td>${{ "%.2f"|format(bill.tax) }}</td></tr>
+                            <tr class="fw-bold"><td>Total:</td><td>${{ "%.2f"|format(bill.total_amount) }}</td></tr>
+                            <tr><td>Paid:</td><td>${{ "%.2f"|format(bill.paid_amount) }}</td></tr>
+                            <tr class="fw-bold text-{{ 'success' if bill.balance_due == 0 else 'danger' }}"><td>Balance Due:</td><td>${{ "%.2f"|format(bill.balance_due) }}</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        {% if bill.payment_status != 'paid' %}
+        <div class="card shadow-sm no-print">
+            <div class="card-header bg-white"><h5 class="mb-0"><i class="bi bi-cash"></i> Record Payment</h5></div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.pay_bill', bill_id=bill.id) }}">
+                    <div class="mb-3">
+                        <label class="form-label">Amount Due</label>
+                        <input type="text" class="form-control" value="${{ "%.2f"|format(bill.balance_due) }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Payment Amount *</label>
+                        <input type="number" step="0.01" name="amount" class="form-control" max="{{ bill.balance_due }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Payment Method *</label>
+                        <select name="payment_method" class="form-select" required>
+                            <option value="">Select method</option>
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="insurance">Insurance</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="mobile_money">Mobile Money</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100"><i class="bi bi-check-lg"></i> Record Payment</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white"><h5 class="mb-0"><i class="bi bi-check-circle"></i> Paid</h5></div>
+            <div class="card-body text-center">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                <p class="mt-2 mb-0">This bill has been fully paid.</p>
+                <button class="btn btn-outline-primary mt-2" onclick="window.print()"><i class="bi bi-printer"></i> Print Receipt</button>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
