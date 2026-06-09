@@ -37,7 +37,7 @@ def create_app(config_name=None):
 
     @app.context_processor
     def inject_now():
-        return {'now': __import__('datetime').datetime.utcnow()}
+        return {'now': __import__('datetime').datetime.now(__import__('datetime').timezone.utc)}
 
     @app.context_processor
     def inject_unread_notifications():
