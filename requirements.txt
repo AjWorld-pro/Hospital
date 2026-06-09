@@ -5,4 +5,4 @@ Flask-Bcrypt==1.0.1
 SQLAlchemy==2.0.50
 Werkzeug==3.0.1
 gunicorn==21.2.0
-psycopg[binary]==3.2.4
+psycopg[binary]==3.3.4
